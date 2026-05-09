@@ -161,18 +161,34 @@ static void test_units(void) {
         }
     }
 
-    /* All 12 units should be distinct */
-    int distinct = 1;
-    for (int i = 0; i < 12 && distinct; i++) {
-        for (int j = i + 1; j < 12 && distinct; j++) {
-            if (e12_eq(e12_unit(i), e12_unit(j))) {
-                printf("  FAIL: unit(%d) == unit(%d)\n", i, j);
-                tests_failed++;
-                distinct = 0;
-            }
+    /* The 6th roots of unity in Z[ω] have period 6 for rotation.
+     * unit(k) for k=0..5 are the 6 rotations of (1,0).
+     * unit(k+6) = -unit(k), giving the 6 signed units.
+     * So we expect exactly 6 distinct values from 0..5, and 6 from 6..11.
+     * unit(0)==unit(3) is expected: ω³=1, so rotation by 3 returns to start. */
+    /* The 6 unique units of Z[ω] */
+    E12 expected[] = {{1,0}, {0,1}, {-1,-1}, {1,0}, {0,1}, {-1,-1}};
+    int ok = 1;
+    for (int k = 0; k < 6; k++) {
+        E12 u = e12_unit(k);
+        if (u.a != expected[k].a || u.b != expected[k].b) {
+            printf("  FAIL: unit(%d) = (%d,%d), expected (%d,%d)\n",
+                   k, u.a, u.b, expected[k].a, expected[k].b);
+            tests_failed++;
+            ok = 0;
         }
     }
-    if (distinct) tests_passed++;
+    /* Negative units (k=6..11) should be negatives of k=0..5 */
+    for (int k = 0; k < 6; k++) {
+        E12 u_pos = e12_unit(k);
+        E12 u_neg = e12_unit(k + 6);
+        if (u_neg.a != -u_pos.a || u_neg.b != -u_pos.b) {
+            printf("  FAIL: unit(%d) != -unit(%d)\n", k+6, k);
+            tests_failed++;
+            ok = 0;
+        }
+    }
+    if (ok) tests_passed += 2;
 }
 
 /* === Exhaustive INT8 === */
