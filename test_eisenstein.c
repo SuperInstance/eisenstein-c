@@ -48,7 +48,7 @@ int main(void) {
 
     /* Rotation preserves norm */
     r = a;
-    int32_t n0 = e12_norm(a);
+    int64_t n0 = e12_norm(a);
     for (int i = 0; i < 100; i++) {
         r = e12_rotate_60(r);
         if (e12_norm(r) != n0) break;
