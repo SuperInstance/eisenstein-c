@@ -65,14 +65,11 @@ e12_disk_t e12_disk_new(int32_t radius) {
     size_t count = 0;
     for (int32_t a = -radius; a <= radius; a++) {
         for (int32_t b = -radius; b <= radius; b++) {
-            int32_t hd = e12_hex_dist(*(const e12_t *)&(const int32_t[2]){a, b});
-            (void)hd; /* hex dist is max(|a|,|b|,|a-b|) */
             int32_t aa = a < 0 ? -a : a;
             int32_t bb = b < 0 ? -b : b;
             int32_t ab = (a - b) < 0 ? -(a - b) : (a - b);
             int32_t m = aa > bb ? aa : bb;
-            hd = m > ab ? m : ab;
-            if (hd <= radius) count++;
+            if ((m > ab ? m : ab) <= radius) count++;
         }
     }
     
