@@ -52,53 +52,6 @@ typedef struct {
 e12_disk_t e12_disk_new(int32_t radius);
 void e12_disk_free(e12_disk_t *disk);
 
-/*
- * e12_div — Euclidean division in Z[ω].
- *
- * Returns quotient q and sets *rem = x - q*y (if rem is non-NULL).
- * Guarantees N(*rem) < N(y) whenever N(y) > 0.
- * Behaviour is undefined when y == E12_ZERO.
- */
-e12_t e12_div(e12_t x, e12_t y, e12_t *rem);
-
-/*
- * e12_gcd — Greatest common divisor via the Euclidean algorithm in Z[ω].
- *
- * Returns a GCD; result is canonical only up to the 6 units {±1, ±ω, ±ω²}.
- * e12_gcd(E12_ZERO, E12_ZERO) returns E12_ZERO.
- */
-e12_t e12_gcd(e12_t x, e12_t y);
-
-/*
- * e12_is_prime — Test whether an Eisenstein integer is irreducible.
- *
- * An Eisenstein integer z is prime iff one of:
- *   • N(z) = 3  (z is associate of 1−ω, the ramified prime above 3)
- *   • N(z) = p, a rational prime with p ≡ 1 (mod 3)  (split prime)
- *   • N(z) = p², a rational prime with p ≡ 2 (mod 3)  (inert prime)
- *
- * Returns false for units (N = 1) and zero.
- */
-bool e12_is_prime(e12_t z);
-
-/*
- * e12_from_norm — Find all Eisenstein integers with the given norm.
- *
- * Returns a heap-allocated array of every z ∈ Z[ω] with N(z) == norm,
- * writing the count into *count.  The caller must free() the result.
- * Returns NULL with *count == 0 when no solutions exist or on allocation
- * failure.  norm must be non-negative; negative norm returns NULL.
- */
-e12_t *e12_from_norm(int64_t norm, size_t *count);
-
-/*
- * e12_hash — Hash an Eisenstein integer for use in hash tables.
- *
- * Equal integers always produce the same hash.  This is NOT a
- * cryptographic hash; use only for hash-table bucketing.
- */
-uint64_t e12_hash(e12_t x);
-
 /* Integer overflow check for multiplication */
 static inline bool e12_would_overflow_add(int32_t a, int32_t b) {
     return ((b > 0 && a > INT32_MAX - b) || (b < 0 && a < INT32_MIN - b));
